@@ -1,5 +1,6 @@
 use std::cmp::Ordering;
 mod tests;
+mod traits;
 
 // little endian
 pub struct Number {
@@ -41,8 +42,8 @@ impl Number {
 
         match Self::cmp_vec(a, b) {
             Ordering::Greater => {
-                for i in 0..a.len() {
-                    let a_val = a[i] as i64;
+                for (i, &a_elem) in a.iter().enumerate() {
+                    let a_val = a_elem as i64;
                     let b_val = match b.get(i) {
                         Some(b) => *b as i64,
                         None => 0i64,
@@ -56,12 +57,11 @@ impl Number {
                         result.push(diff as u32);
                         borrow = 0;
                     }
-
                 }
             }
             Ordering::Less => {
-                for i in 0..b.len() {
-                    let a_val = b[i] as i64;
+                for (i, &a_elem) in b.iter().enumerate() {
+                    let a_val = a_elem as i64;
                     let b_val = match a.get(i) {
                         Some(b) => *b as i64,
                         None => 0i64,
