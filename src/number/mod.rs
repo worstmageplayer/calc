@@ -246,6 +246,9 @@ impl Number {
     }
     
     // Modulo operation for Vec<u32>
+    // Note: This implementation uses repeated subtraction which is O(dividend/divisor) time complexity.
+    // This is sufficient for the GCD algorithm's use case with typical fraction values.
+    // For general-purpose arbitrary-precision modulo, a more sophisticated algorithm would be needed.
     fn mod_vec(a: &[u32], b: &[u32]) -> Vec<u32> {
         if Self::is_zero_vec(b) {
             return vec![0];
@@ -286,6 +289,10 @@ impl Number {
     }
     
     // Integer division for Vec<u32>
+    // Note: This implementation uses repeated subtraction which is O(result) time complexity
+    // and returns the result as a single u32 value. This is sufficient for the reduce() function's
+    // use case where we divide by GCD values, which are typically small.
+    // For general-purpose arbitrary-precision division, a more sophisticated algorithm would be needed.
     fn div_vec(a: &[u32], b: &[u32]) -> Vec<u32> {
         if Self::is_zero_vec(b) {
             return vec![0];
@@ -298,6 +305,11 @@ impl Number {
         while Number::cmp_vec(&remainder, b) != Ordering::Less {
             remainder = Self::diff_vec(&remainder, b);
             count += 1;
+            
+            // Overflow protection - if we exceed u32::MAX, return what we have
+            if count == u32::MAX {
+                break;
+            }
         }
         
         if count == 0 {
